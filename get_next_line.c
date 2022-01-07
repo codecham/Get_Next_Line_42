@@ -6,18 +6,16 @@
 /*   By: dcorenti <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/07 18:36:17 by dcorenti          #+#    #+#             */
-/*   Updated: 2022/01/07 19:13:14 by dcorenti         ###   ########.fr       */
+/*   Updated: 2022/01/07 20:50:47 by dcorenti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 
-char	*get_line(char *save)
+char	*get_line(char *save, int i)
 {
-	int		i;
 	char	*new;
 
-	i = 0;
 	while (save && save[i] && save[i] != '\n')
 		i++;
 	if (is_line(save) >= 0)
@@ -99,27 +97,26 @@ static char	*update_line(char *save)
 	return (new);
 }
 
-char	*get_next_line_ext(int fd)
+char	*get_next_line_ext(int fd, char *line, int lu)
 {
 	static char	*save;
-	char		*line;
-	int			lu;
 	char		tmp[BUFFER_SIZE + 1];
 
-	line = NULL;
-	lu = 0;
 	if (read(fd, line, 0) < 0)
 		return (ft_error(save));
 	if (is_line(save) < 0)
 	{
-		while (is_line(save) < 0 && (lu = read(fd, tmp, BUFFER_SIZE)))
+		lu = read(fd, tmp, BUFFER_SIZE);
+		while (is_line(save) < 0 && lu > 0)
 		{
 			save = join(save, tmp, lu);
 			if (!save)
 				return (ft_error(save));
+			if (is_line(save) < 0 && lu >= 0)
+				lu = read(fd, tmp, BUFFER_SIZE);
 		}
 	}
-	line = get_line(save);
+	line = get_line(save, 0);
 	if (line == NULL)
 		return (ft_error(save));
 	save = update_line(save);
@@ -128,7 +125,12 @@ char	*get_next_line_ext(int fd)
 
 char	*get_next_line(int fd)
 {
+	char	*line;
+	int		lu;
+
+	line = NULL;
+	lu = 0;
 	if (BUFFER_SIZE <= 0 || fd < 0)
 		return (ft_error(0));
-	return (get_next_line_ext(fd));
+	return (get_next_line_ext(fd, line, lu));
 }
