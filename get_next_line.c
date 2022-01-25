@@ -6,7 +6,7 @@
 /*   By: dcorenti <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/01/07 18:36:17 by dcorenti          #+#    #+#             */
-/*   Updated: 2022/01/07 20:50:47 by dcorenti         ###   ########.fr       */
+/*   Updated: 2022/01/25 16:11:40 by dcorenti         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,7 @@ static char	*update_line(char *save)
 	return (new);
 }
 
-char	*get_next_line_ext(int fd, char *line, int lu)
+static char	*get_next_line_ext(int fd, char *line, int lu)
 {
 	static char	*save;
 	char		tmp[BUFFER_SIZE + 1];
